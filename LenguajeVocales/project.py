@@ -2,14 +2,16 @@ import time
 from asistente import AsistenteVoz
 #from aprendizaje import Aprendizaje
 #from test import Test
-from juego_ia import Juego_senias
+from juego_AH import Juego_senias
+#from juego_nuevo import 
+#from juego_CS import 
 import customtkinter as ctk
 
 class VirtualAssistant:
     def __init__(self):
         self.asistente_voz = AsistenteVoz()
-        #self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
-        #self.mi_test = Test(callback=self.presentar_opciones)
+        #self.mi_aprendizaje = Juego_Nuevo(callback=self.presentar_opciones)
+        #self.mi_juego2 = Juego_CS(callback=self.presentar_opciones)
         self.mi_juego = Juego_senias(callback=self.presentar_opciones)
         self.option_label = None
         self.win_choose = None
@@ -35,6 +37,7 @@ class VirtualAssistant:
         self.option_label.configure(text="Escogiste Juego")
         self.win_choose.destroy()
     
+    # Se ejecuta
     def presentar_opciones(self):
 
         self.win_choose = ctk.CTk()
@@ -79,6 +82,7 @@ class VirtualAssistant:
         elif (self.option_label.cget("text") == "Escogiste Juego"):
             self.mi_juego.ejecutar()
 
+    # No se ejecuta
     def saludar_usuario(self):
         print("\nSALUDO:")
         bienvenida = "Hola. Soy tu Asistente Virtual. Fui creada para instruirte sobre el lenguaje de señas. Antes de empezar ¿Podrías decirme tu nombre?"
@@ -89,7 +93,7 @@ class VirtualAssistant:
         print(text)
         self.texto_a_audio(text)
         return nombre
-
+    # No se ejecuta
     def introduccion(self):
         print("\nINTRODUCCIÓN:")
         concepto = "El lenguaje de señas es un sistema de comunicación que utiliza gestos, movimientos de manos y expresiones faciales para transmitir mensajes, especialmente diseñado para personas con discapacidad auditiva."

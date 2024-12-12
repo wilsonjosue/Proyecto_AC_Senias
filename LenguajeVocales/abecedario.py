@@ -78,7 +78,7 @@ class ClasificadorSenia:
             and abs(thumb_tip[1] - pinky_pip[1]) < 30:
             return 'A'
                     
-        elif index_finger_pip[1] - index_finger_tip[1]>0 and pinky_pip[1] - pinky_tip[1] > 0 and \
+        elif index_finger_pip[1] > index_finger_tip[1] and pinky_pip[1] - pinky_tip[1] > 0 and \
             middle_finger_pip[1] - middle_finger_tip[1] >0 and ring_finger_pip[1] - ring_finger_tip[1] >0 and \
             middle_finger_tip[1] - ring_finger_tip[1] <0 and abs(thumb_tip[1] - ring_finger_pip2[1])<40:
             return 'B'
@@ -134,10 +134,96 @@ class ClasificadorSenia:
         #    cv2.putText(image, 'J', (700, 150), 
         #                cv2.FONT_HERSHEY_SIMPLEX, 
         #                3.0, (0, 0, 255), 6)
-                    
-        #elif (index_finger_tip[1] < middle_finger_tip[1] < ring_finger_tip[1] and   
-        #    thumb_tip[1] < index_finger_tip[1] and thumb_tip < middle_finger_tip[1] and  
-        #    ring_finger_tip[1] > index_finger_tip[1] and pinky_tip[1] > index_finger_tip[1]): 
-        #                cv2.FONT_HERSHEY_SIMPLEX,
-        #                2, (0, 0, 255), 6)
+
+
+        
+
+
+        # Desde la R hasta la Z   
+        # letra R  
+        elif distancia_euclidiana(index_finger_tip, middle_finger_tip) < 20 \
+                and index_finger_tip[1] < index_finger_pip[1] \
+                and middle_finger_tip[1] < middle_finger_pip[1] \
+                and ring_finger_tip[1] > ring_finger_pip[1] \
+                and pinky_tip[1] > pinky_pip[1] and thumb_tip[1] > index_finger_pip[1] \
+                and distancia_euclidiana(thumb_tip, index_finger_pip) > 30:
+            return 'R'
+        # Letra echa con logica propia_ probar 
+        elif abs(thumb_tip[0] - ring_finger_tip[0]) < 20 and abs(thumb_tip[1] - ring_finger_tip[1]) < 20 and \
+            abs(index_finger_tip[0] - middle_finger_dip[0]) < 20 and \
+            abs(index_finger_tip[1] - middle_finger_dip[1]) < 20 and \
+            middle_finger_tip[1] < index_finger_tip[1] and \
+            ring_finger_pip[1] > ring_finger_dip[1] and \
+            pinky_pip[1] > pinky_dip[1] and \
+            pinky_tip[1] > ring_finger_tip[1]:
+            return 'R'
+
+        # Calibrar S
+        elif abs(thumb_ip[0] - index_finger_dip[0]) < 20 and abs(thumb_ip[1] - index_finger_dip[1]) < 20 and \
+            abs(thumb_tip[0] - middle_finger_pip[0]) < 20 and \
+            abs(thumb_tip[1] - middle_finger_pip[1]) < 20 and \
+            index_finger_pip[1] > index_finger_dip[1] and \
+            middle_finger_pip[1] > middle_finger_dip[1] and \
+            ring_finger_pip[1] > ring_finger_dip[1] and \
+            pinky_pip[1] > pinky_dip[1]:
+            return 'S'
+
+        # Calibrar T
+        elif abs(thumb_tip[0] - index_finger_dip[0]) < 20 and abs(thumb_tip[1] - index_finger_dip[1]) < 20 and \
+            abs(index_finger_tip[1] - index_finger_dip[1]) < 10 and \
+            middle_finger_pip[1] > index_finger_pip[1] and \
+            ring_finger_pip[1] > index_finger_pip[1] and \
+            pinky_pip[1] > index_finger_pip[1]:
+            return 'T'
+
+       # Calibrar U
+        elif abs(thumb_tip[0] - middle_finger_dip[0]) < 30 and abs(thumb_tip[1] - middle_finger_dip[1]) < 30 and \
+            index_finger_pip[1] > index_finger_tip[1] and middle_finger_pip[1] < middle_finger_tip[1] and \
+            ring_finger_pip[1] < ring_finger_tip[1] and pinky_pip[1] > pinky_tip[1]:
+            return 'U' 
+        
+        # Calibrar V
+        elif abs(thumb_tip[0] - ring_finger_pip[0]) < 30 and abs(thumb_tip[1] - ring_finger_pip[1]) < 30 and \
+            index_finger_pip[1] > index_finger_tip[1] and \
+            middle_finger_pip[1] > middle_finger_tip[1] and \
+            ring_finger_pip[1] < ring_finger_tip[1] and pinky_pip[1] < pinky_tip[1] and \
+            abs(index_finger_tip[0] - middle_finger_tip[0]) > 50:
+            return 'V'
+        # Calibrar W
+        elif abs(thumb_tip[0] - pinky_tip[0]) < 30 and abs(thumb_tip[1] - pinky_tip[1]) < 30 and \
+            index_finger_pip[1] > index_finger_tip[1] and \
+            middle_finger_pip[1] > middle_finger_tip[1] and \
+            ring_finger_pip[1] > ring_finger_tip[1] and \
+            pinky_pip[1] < pinky_tip[1] and \
+            abs(index_finger_tip[0] - middle_finger_tip[0]) > 50 and \
+            abs(middle_finger_tip[0] - ring_finger_tip[0]) > 50:
+            return 'W'
+        # Calibrar X
+        elif abs(thumb_tip[0] - middle_finger_dip[0]) < 30 and abs(thumb_tip[1] - middle_finger_dip[1]) < 30 and \
+            index_finger_pip[1] < middle_finger_pip[1] and \
+            index_finger_pip[1] < ring_finger_pip[1] and \
+            index_finger_pip[1] < pinky_pip[1] and \
+            index_finger_tip[1] > index_finger_pip[1] and \
+            middle_finger_pip[1] < middle_finger_tip[1] and \
+            ring_finger_pip[1] < ring_finger_tip[1] and \
+            pinky_pip[1] < pinky_tip[1]:
+            return 'X'
+        
+        # Calibrar letra Y
+        elif abs(thumb_tip[0] - index_finger_pip[0]) > 50 and thumb_tip[1] < index_finger_pip[1] and \
+            index_finger_pip[1] > middle_finger_pip[1] and \
+            middle_finger_pip[1] > ring_finger_pip[1] and \
+            ring_finger_pip[1] > pinky_pip[1] and \
+            abs(pinky_tip[0] - ring_finger_pip[0]) > 50 and \
+            pinky_tip[1] < ring_finger_pip[1]:
+            return 'Y'
+
+        # Calibrar letra Z
+        elif abs(thumb_tip[0] - middle_finger_pip[0]) < 20 and \
+            abs(thumb_tip[1] - middle_finger_pip[1]) < 20 and \
+            index_finger_pip[1] < middle_finger_pip[1] and \
+            middle_finger_pip[1] > ring_finger_pip[1] and \
+            ring_finger_pip[1] > pinky_pip[1]:
+            return 'Z'
+
         return None                             

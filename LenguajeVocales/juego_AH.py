@@ -241,7 +241,7 @@ class Juego_senias:
         self.BotonSalir.grid(row=0, column=2, sticky="ew", padx = 25)
         self.BotonSalir.configure(font=font_title, fg_color='steelblue', text_color= 'white', corner_radius= 8)
 
-    # para dibujar el ahorcado
+    # Para dibujar al muñeco del ahorcado 
     def __Dibujo(self):
 
         if self.EstamosJugando:
