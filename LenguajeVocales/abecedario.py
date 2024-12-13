@@ -128,19 +128,86 @@ class ClasificadorSenia:
             thumb_tip[1] > thumb_ip[1]:
             return 'I' 
                            
-        #elif pinky_pip[1] - pinky_tip[1] > 30 and pinky_tip[1] > ring_finger_tip[1] and \
-        #    pinky_tip[1] > middle_finger_tip[1] and pinky_tip[1] > index_finger_tip[1] and \
-        #    pinky_tip[1] > thumb_tip[1]:
-        #    cv2.putText(image, 'J', (700, 150), 
-        #                cv2.FONT_HERSHEY_SIMPLEX, 
-        #                3.0, (0, 0, 255), 6)
-
-
+        # calibrar letra J                   
+        elif distancia_euclidiana(thumb_tip, middle_finger_dip) < 20 \
+            and index_finger_tip[1] > index_finger_pip[1] \
+            and middle_finger_tip[1] > middle_finger_pip[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] < pinky_pip[1]:
+            return 'J'
         
+        # Falta calibrar K
+        elif distancia_euclidiana(thumb_tip, index_finger_mcp) < 20 \
+            and index_finger_tip[1] < index_finger_mcp[1] \
+            and middle_finger_tip[1] < middle_finger_mcp[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1] \
+            and abs(wrist[1] - middle_finger_tip[1]) < 10:  # Mano inclinada a la izquierda
+            return 'K'
 
+        #Falta calibrar L
+        #distancia_euclidiana(thumb_tip, index_finger_mcp) > 30 : Separación horizontal entre el pulgar y la base del índice
+        elif distancia_euclidiana(thumb_tip, index_finger_mcp) > 30 \
+            and index_finger_tip[1] < index_finger_pip[1] \
+            and middle_finger_tip[1] > middle_finger_pip[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1]:  # Meñique doblado hacia la palma
+            return 'L'
+        
+        #Falta calibrar M
+        elif wrist[1] < thumb_tip[1] and wrist[1] < index_finger_tip[1] \
+            and distancia_euclidiana(thumb_tip, pinky_dip) < 20 \
+            and index_finger_tip[1] < index_finger_pip[1] \
+            and middle_finger_tip[1] < middle_finger_pip[1] \
+            and ring_finger_tip[1] < ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1] \
+            and abs(index_finger_tip[0] - middle_finger_tip[0]) < 15 \
+            and abs(middle_finger_tip[0] - ring_finger_tip[0]) < 15:  # Separación corta entre medio y anular (eje X)
+            return 'M'
+        #Falta calibrar N
+        elif wrist[1] < thumb_tip[1] and wrist[1] < index_finger_tip[1] \
+            and distancia_euclidiana(thumb_tip, pinky_tip) < 20 \
+            and distancia_euclidiana(thumb_tip, ring_finger_tip) < 20 \
+            and index_finger_tip[1] < index_finger_pip[1] \
+            and middle_finger_tip[1] < middle_finger_pip[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1] \
+            and abs(index_finger_tip[0] - middle_finger_tip[0]) < 15:  # Separación corta en el eje X entre índice y medio
+            return 'N'
+        
+        #Falta calibrar O
+        elif distancia_euclidiana(thumb_tip, index_finger_tip) < 10 \
+            and distancia_euclidiana(thumb_tip, middle_finger_tip) < 10 \
+            and distancia_euclidiana(thumb_tip, ring_finger_tip) < 10 \
+            and distancia_euclidiana(thumb_tip, pinky_tip) < 10 \
+            and index_finger_tip[1] > index_finger_pip[1] \
+            and middle_finger_tip[1] > middle_finger_pip[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1]:  # Meñique doblado hacia la palma
+            return 'O'
 
-        # Desde la R hasta la Z   
-        # letra R  
+        # and wrist[1] < pinky_tip[1] :La muñeca está por encima de todos los puntos
+        # and thumb_tip[1] > index_finger_mcp[1] : El pulgar está hacia abajo
+        elif wrist[1] < thumb_tip[1] and wrist[1] < index_finger_tip[1] \
+            and wrist[1] < middle_finger_tip[1] and wrist[1] < ring_finger_tip[1] \
+            and wrist[1] < pinky_tip[1] \
+            and thumb_tip[1] > index_finger_mcp[1] \
+            and index_finger_tip[1] < index_finger_mcp[1] \
+            and middle_finger_tip[1] > index_finger_tip[1]:  # Medio apunta hacia abajo
+            return 'P'
+        
+        # Falta calibrar letra Q 
+        elif wrist[1] < thumb_tip[1] and wrist[1] < index_finger_tip[1] \
+            and wrist[1] < middle_finger_tip[1] and wrist[1] < ring_finger_tip[1] \
+            and wrist[1] < pinky_tip[1] and thumb_tip[1] < index_finger_mcp[1] \
+            and index_finger_tip[1] > index_finger_pip[1] \
+            and middle_finger_tip[1] > middle_finger_pip[1] \
+            and ring_finger_tip[1] > ring_finger_pip[1] \
+            and pinky_tip[1] > pinky_pip[1] \
+            and abs(thumb_tip[0] - index_finger_tip[0]) > 10:  # Separación horizontal entre el pulgar y el índice
+            return 'Q'
+  
+        # Falta calibrar letra R  
         elif distancia_euclidiana(index_finger_tip, middle_finger_tip) < 20 \
                 and index_finger_tip[1] < index_finger_pip[1] \
                 and middle_finger_tip[1] < middle_finger_pip[1] \
@@ -148,6 +215,7 @@ class ClasificadorSenia:
                 and pinky_tip[1] > pinky_pip[1] and thumb_tip[1] > index_finger_pip[1] \
                 and distancia_euclidiana(thumb_tip, index_finger_pip) > 30:
             return 'R'
+        
         # Letra echa con logica propia_ probar 
         elif abs(thumb_tip[0] - ring_finger_tip[0]) < 20 and abs(thumb_tip[1] - ring_finger_tip[1]) < 20 and \
             abs(index_finger_tip[0] - middle_finger_dip[0]) < 20 and \
@@ -224,6 +292,6 @@ class ClasificadorSenia:
             index_finger_pip[1] < middle_finger_pip[1] and \
             middle_finger_pip[1] > ring_finger_pip[1] and \
             ring_finger_pip[1] > pinky_pip[1]:
-            return 'Z'
+            return 'Z'  
 
         return None                             
