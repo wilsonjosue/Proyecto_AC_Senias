@@ -21,9 +21,8 @@ class Juego_senias:
         # Variables para el juego
         self.EntradaTexto = None
         self.Texto1, self.Texto2 = None, None  # Inicializadas más tarde
-        #self.Texto1, self.Texto2 = tk.StringVar(), tk.StringVar()
-        #self.Texto2.set("Tus jugadas: ")
-
+        # estado de hilo de la camara
+        self.camara_activa = False
         # Imagen
         self.frame_imagen = None
         # Muñeco
@@ -57,7 +56,8 @@ class Juego_senias:
         self.palabra(app)
         self.botones(app)
         self.JuegoNuevo()
-
+        self.camara_activa = True  # Activar la cámara
+        
         # Iniciar cámara para detección de manos
         self.iniciar_hilo_camara()
 
@@ -86,7 +86,7 @@ class Juego_senias:
             self.EntradaTexto.configure(text=key_pressed)
     # falta condigurar arreglzr parque no envie la letra aoutomaticamente y este ala izquierda arriba pantalla.
     def procesar_camara(self):
-        while True:
+        while self.camara_activa:
             ret, frame = self.cap.read()
             if not ret:
                 continue
@@ -112,7 +112,8 @@ class Juego_senias:
                     self._ctk_image.configure(dark_image=img)
                 self.video_label.configure(image=self._ctk_image)
 
-            self.video_label.after(0, actualizar_imagen)
+            if self.camara_activa:
+                self.video_label.after(0, actualizar_imagen)
             
     # todo LO RELACIONADO CON EL JUEGO DEL AHORCADO
     def JuegoNuevo(self):
@@ -199,9 +200,7 @@ class Juego_senias:
 
     # Modificaciones para palabra como se ve en el recuadro falta ajustar
     def palabra(self, app):
-        #self.Texto1.set("_ " * len(self.ObjetoJuego.getPalabra()))
-        #etiqueta_palabra = ct.CTkLabel(app, textvariable=self.Texto1, fg_color="white", width=600, height=100)
-        #etiqueta_palabra.grid(row=2, column=1)
+
         self.frame_palabra=ct.CTkFrame(master=app, width=750, height=210, fg_color="transparent")
         self.frame_palabra.grid(row=2, column=1, padx = (20,10),pady=(10,10))
         #Palabra
@@ -220,10 +219,7 @@ class Juego_senias:
         self.Etiqueta2.configure(fg_color="transparent" ,font=("Verdana",30))
 
     def botones(self, app):
-        #boton_nuevo = ct.CTkButton(app, text="Nuevo Juego", command=self.JuegoNuevo)
-        #boton_nuevo.grid(row=3, column=0)
-        #boton_salir = ct.CTkButton(app, text="Salir", command=app.destroy)
-        #boton_salir.grid(row=3, column=1)
+
         self.frame_botones = ct.CTkFrame(master=app, height=50, fg_color="transparent")
         self.frame_botones.grid(row=3, column=0, columnspan=2, pady=(4,4), padx=(10,10))
 
@@ -306,10 +302,14 @@ class Juego_senias:
                 self.Lienzo.create_line(100,135, 130,165, width=3,fill="white")#pierna2
 
     def cerrar_ventana(self, app):
+        self.camara_activa = False  # Detener el hilo de la cámara
+        if self.cap.isOpened():
+            self.cap.release()  # Liberar la cámara
+
         self.desvincular_eventos(app)
         app.destroy()
-        #if self.callback:
-        #    self.callback()
+        if self.callback:
+           self.callback()
     
     def desvincular_eventos(self, app):
         app.unbind("<Return>")
@@ -319,5 +319,6 @@ class Juego_senias:
         app.unbind("<Key>")
 
 if __name__ == "__main__":
+
     juego = Juego_senias(callback=None)
     juego.ejecutar()

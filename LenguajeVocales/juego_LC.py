@@ -13,29 +13,15 @@ COLOR_LETRA = (0, 0, 0)
 FPS = 60
 
 class JuegoLetras:
-    def __init__(self):
-        pygame.init()
-        self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
-        pygame.display.set_caption("Minijuego: Letras que caen")
-        self.reloj = pygame.time.Clock()
-        self.fuente = pygame.font.Font(None, 74)
-
-        # Cargar la imagen de fondo
-        self.fondo = pygame.image.load("fondo1.jpg")
-        self.fondo = pygame.transform.scale(self.fondo, (ANCHO, ALTO))  # Asegurarnos de que se ajuste al tamaño de la pantalla
-
-        # Inicializar detección de señas
-        self.clasificador_senia = ClasificadorSenia()
-        self.camara = cv2.VideoCapture(0)
-
-        # Establecer resolución de la cámara
-        self.camara.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        self.camara.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-        if not self.camara.isOpened():
-            print("Error: No se pudo acceder a la cámara")
-            self.jugando = False  # Detener el juego si no se puede acceder a la cámara
-            return
+    def __init__(self,callback):
+        # Salir a las opciones
+        self.callback = callback
+        self.pantalla = None
+        self.reloj = None
+        self.fuente = None
+        self.fondo = None
+        self.clasificador_senia = None
+        self.camara = None
 
         # Letras que caen
         self.letras = []
@@ -48,10 +34,39 @@ class JuegoLetras:
 
         # Vidas del jugador (agregamos 50 vidas)
         self.vidas = 50
+        self.boton_empezar = None
+        self.boton_salir = None
 
-        # Botones
-        self.boton_empezar = pygame.Rect(100, 500, 200, 50)  # Posición y tamaño del botón "Empezar"
-        self.boton_salir = pygame.Rect(500, 500, 200, 50)  # Posición y tamaño del botón "Salir"
+    # Funcion controladora para iniciar juego2
+    def inicializar(self):
+        """Inicializa todos los componentes necesarios para el juego."""
+        pygame.init()
+        self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
+        pygame.display.set_caption("Minijuego: Letras que caen")
+        self.reloj = pygame.time.Clock()
+        self.fuente = pygame.font.Font(None, 74)
+
+        # Cargar la imagen de fondo
+        self.fondo = pygame.image.load("fondo1.jpg")
+        # Asegurarnos de que se ajuste al tamaño de la pantalla
+        self.fondo = pygame.transform.scale(self.fondo, (ANCHO, ALTO))
+
+        # Inicializar detección de señas
+        self.clasificador_senia = ClasificadorSenia()
+        self.camara = cv2.VideoCapture(0)
+
+        # Establecer resolución de la cámara
+        self.camara.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.camara.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+        if not self.camara.isOpened():
+            print("Error: No se pudo acceder a la cámara")
+            self.jugando = False
+            return
+
+        # Configurar botones
+        self.boton_empezar = pygame.Rect(100, 500, 200, 50) # Posición y tamaño del botón "Empezar"
+        self.boton_salir = pygame.Rect(500, 500, 200, 50) # Posición y tamaño del botón "Salir"
 
     def generar_letra(self):
         """Genera una letra aleatoria que comienza en una posición aleatoria."""
@@ -170,6 +185,13 @@ class JuegoLetras:
 
     def ejecutar(self):
         """Bucle principal del juego."""
+          
+        self.inicializar() # Controlador para ejecutar el juego
+
+        if not self.jugando:  # Si no se pudo inicializar la cámara
+            print("El juego no puede iniciarse debido a problemas con la cámara.")
+            return
+
         self.dibujar_botones()  # Dibuja los botones al inicio
         pygame.display.update()
 
@@ -258,5 +280,6 @@ class JuegoLetras:
             pygame.display.update()
 
 if __name__ == "__main__":
-    juego = JuegoLetras()
-    juego.ejecutar()
+    print("Ejecutando juego_LC como script independiente.")
+    juego2 = JuegoLetras(callback=None)
+    juego2.ejecutar()
