@@ -39,6 +39,7 @@ class Juego_senias:
     def ejecutar(self):
         # Configuración de la interfaz
         app = ct.CTk()
+        app.protocol("WM_DELETE_WINDOW",lambda: self.cerrar_ventana(app))
         app.geometry("1200x690")
         app.title("Juego del Ahorcado")
         app.resizable(False, False)
