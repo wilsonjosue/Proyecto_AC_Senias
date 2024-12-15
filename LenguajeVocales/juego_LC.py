@@ -5,7 +5,7 @@ import cv2
 from threading import Thread
 from PIL import Image
 import numpy as np
-
+from multiprocessing import Process, Queue
 # Configuración de la pantalla
 ANCHO = 800
 ALTO = 600
@@ -75,7 +75,7 @@ class JuegoLetras:
         y = -50  # Comienza fuera de la pantalla
         self.letras.append({"letra": letra, "posicion": [x, y]})
 
-    def procesar_camara(self):
+    def procesar_camara(self,queue):
         """Procesa las imágenes de la cámara para detectar la letra señalada."""
         print("Iniciando captura de cámara...")
         while self.jugando:
@@ -102,7 +102,8 @@ class JuegoLetras:
             self.pantalla.blit(frame_surface, (0, 0))  # Aquí puedes ajustar la posición si es necesario
 
             # Procesar el frame con el clasificador de señas
-            letra, _ = self.clasificador_senia.procesar_mano(frame)
+            letra, _,[x1,y1,x2,y2] = self.clasificador_senia.procesar_mano(frame)
+            queue.put([letra,[x1,y1,x2,y2]])
             if letra:
                 print(f"Letra detectada: {letra}")  # Mensaje cuando se detecta una letra
                 self.letra_detectada = letra
@@ -183,7 +184,7 @@ class JuegoLetras:
 
         pygame.display.update()
 
-    def ejecutar(self):
+    def ejecutar(self,queue):
         """Bucle principal del juego."""
           
         self.inicializar() # Controlador para ejecutar el juego
@@ -201,6 +202,7 @@ class JuegoLetras:
         while not en_juego:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
+                    queue.put("EXIT")
                     pygame.quit()
                     exit()
 
@@ -208,12 +210,13 @@ class JuegoLetras:
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     if self.boton_empezar.collidepoint(evento.pos):
                         en_juego = True
-                        Thread(target=self.procesar_camara, daemon=True).start()  # Inicia el hilo de la cámara
+                        Thread(target=lambda: self.procesar_camara(queue), daemon=True).start()  # Inicia el hilo de la cámara
                         print("Hilo de cámara iniciado.")  # Mensaje para confirmar que el hilo se ha iniciado
 
                 # Verificar clic en el botón "Salir"
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     if self.boton_salir.collidepoint(evento.pos):
+                        queue.put("EXIT")
                         pygame.quit()
                         exit()
 
@@ -259,6 +262,7 @@ class JuegoLetras:
         while True:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
+                    queue.put("EXIT")
                     pygame.quit()
                     exit()
 
@@ -272,14 +276,60 @@ class JuegoLetras:
                 # Verificar clic en el botón "Salir"
                 if evento.type == pygame.MOUSEBUTTONDOWN:
                     if self.boton_salir.collidepoint(evento.pos):
+                        queue.put("EXIT")
                         pygame.quit()
                         exit()
 
             # Dibujar los botones
             self.dibujar_botones()
             pygame.display.update()
+            
+            
+def mostrar_camara(queue):
+
+    camara = cv2.VideoCapture(0)
+
+    if not camara.isOpened():
+        print("Error: No se pudo acceder a la cámara")
+        return
+
+    while True:
+        ret, frame = camara.read()
+        if not ret:
+            print("Error: No se pudo leer el frame de la cámara")
+            break
+
+        # Dibujar sobre el frame si hay datos en el queue
+        if not queue.empty():
+            
+            data = queue.get()
+            if data =='EXIT':
+                print(data)
+                break
+            cv2.rectangle(frame, (data[1][0], data[1][1]), (data[1][2], data[1][3]), (0, 0, 0), 4)
+            cv2.putText(frame, data[0], (data[1][0], data[1][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
+                        cv2.LINE_AA)
+            print("Datos recibidos del queue:", data)
+
+        # Mostrar el frame con OpenCV
+        cv2.imshow('Cámara', frame)
+
+        # Salir al presionar la tecla 'q'
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    camara.release()
+    cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
-    print("Ejecutando juego_LC como script independiente.")
-    juego2 = JuegoLetras(callback=None)
-    juego2.ejecutar()
+    queue = Queue()
+    juego = JuegoLetras(callback=None)
+    proceso_juego = Process(target=juego.ejecutar, args=(queue,))
+    proceso_camara = Process(target=mostrar_camara, args=(queue,))
+
+    proceso_juego.start()
+    proceso_camara.start()
+
+    proceso_juego.join()
+    proceso_camara.join()
