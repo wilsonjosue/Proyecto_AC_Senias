@@ -102,7 +102,7 @@ class JuegoLetras:
             self.pantalla.blit(frame_surface, (0, 0))  # Aquí puedes ajustar la posición si es necesario
 
             # Procesar el frame con el clasificador de señas
-            letra, _ = self.clasificador_senia.procesar_mano(frame)
+            letra, _,[x1,y1,x2,y2] = self.clasificador_senia.procesar_mano(frame)
             if letra:
                 print(f"Letra detectada: {letra}")  # Mensaje cuando se detecta una letra
                 self.letra_detectada = letra
