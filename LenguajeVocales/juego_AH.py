@@ -92,12 +92,14 @@ class Juego_senias:
             if not ret:
                 continue
 
-            letra_detectada, frame_procesado = self.clasificador_senia.procesar_mano(frame)
-
+            letra_detectada, frame_procesado,[x1,y1,x2,y2] = self.clasificador_senia.procesar_mano(frame)
+            
             if letra_detectada:
                 self.EntradaTexto.configure(text=letra_detectada)
                 #self.BotonEnviar()  # Enviar automáticamente la letra detectada al juego
-
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
+            cv2.putText(frame, letra_detectada, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
+                    cv2.LINE_AA)
             # Actualizar el feed de la cámara en la interfaz
             frame_procesado = cv2.cvtColor(frame_procesado, cv2.COLOR_BGR2RGBA)
             frame_procesado = cv2.flip(frame_procesado, 1)
