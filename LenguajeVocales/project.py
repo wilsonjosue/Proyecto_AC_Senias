@@ -4,6 +4,7 @@ from juego_AH import Juego_senias
 from juego_LC import JuegoLetras
 import customtkinter as ctk
 from PIL import Image
+import queue
 
 class VirtualAssistant:
     def __init__(self):
@@ -38,10 +39,10 @@ class VirtualAssistant:
         self.win_choose.destroy()
 
     def do_game2(self):
-        
+        mi_queue = queue.Queue()
         self.imprimir_mensaje("Iniciando Juego Letras Caen...")
         self.win_choose.destroy()
-        self.mi_juego2.ejecutar()
+        self.mi_juego2.ejecutar(mi_queue)
 
     def do_game(self):
         
