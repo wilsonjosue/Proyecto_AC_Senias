@@ -227,7 +227,7 @@ class Arkanoid:
         self.video_label = tk.Label(new_window)
         self.video_label.pack()
         
-        self.actualizacion = self.ventana.after(20, self.mover_bola)
+        self.actualizacion = self.ventana.after(20, lambda:self.mover_bola(nivel))
         #self.procesar_camara()
     def procesar_camara(self):
         """Procesa las imágenes de la cámara para detectar la letra señalada."""
@@ -290,7 +290,7 @@ class Arkanoid:
             self.canvas.move(self.paleta, 20, 0)
         
 
-    def mover_bola(self):
+    def mover_bola(self,nivel):
         if not self.en_juego:
             return
         self.procesar_camara()
@@ -305,7 +305,7 @@ class Arkanoid:
             self.bola_dy = -self.bola_dy
 
         if pos_bola[3] >= self.alto:
-            self.fin_del_juego("Perdiste")
+            self.fin_del_juego("Perdiste",nivel)
 
         pos_paleta = self.canvas.coords(self.paleta)
         if (pos_bola[2] >= pos_paleta[0] and pos_bola[0] <= pos_paleta[2] and
@@ -322,11 +322,11 @@ class Arkanoid:
                 break
 
         if not self.bloques:
-            self.fin_del_juego("Ganaste")
+            self.fin_del_juego("Ganaste",nivel)
 
-        self.actualizacion = self.ventana.after(20, self.mover_bola)
+        self.actualizacion = self.ventana.after(20, lambda:self.mover_bola(nivel))
 
-    def fin_del_juego(self, mensaje):
+    def fin_del_juego(self, mensaje,nivel):
         self.en_juego = False
         self.canvas.create_text(self.ancho / 2, self.alto / 2, text=mensaje, fill="white", font=("Arial", 24))
         
@@ -335,7 +335,7 @@ class Arkanoid:
         contenedor_botones.pack()
 
         # Crear botones
-        boton_reintentar = tk.Button(contenedor_botones, text="Reintentar", command=self.reiniciar_juego)
+        boton_reintentar = tk.Button(contenedor_botones, text="Reintentar", command=lambda:self.reiniciar_juego(nivel))
         boton_reintentar.grid(row=0, column=0, padx=10)
         
         boton_menu = tk.Button(contenedor_botones, text="Menu", command=self.menu_principal)
@@ -344,8 +344,8 @@ class Arkanoid:
         # Colocar el contenedor en el canvas
         self.canvas.create_window(self.ancho / 2, self.alto / 2 + 50, window=contenedor_botones)
 
-    def reiniciar_juego(self):
-        self.seleccionar_nivel()
+    def reiniciar_juego(self,nivel):
+        self.empezar_juego(nivel)
 
     def iniciar_juego(self):
         self.ventana.mainloop()
