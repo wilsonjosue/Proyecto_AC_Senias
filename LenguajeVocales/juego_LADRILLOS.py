@@ -171,14 +171,27 @@ class Arkanoid:
 
         self.canvas.create_text(self.ancho / 2, self.alto / 2 - 100, text="Selecciona un nivel", fill="white", font=("Arial", 24))
 
-        boton_nivel_1 = tk.Button(self.ventana, text="Nivel 1", command=lambda: (self.sonidoBoton(),self.empezar_juego(1)))
-        self.canvas.create_window(self.ancho / 2, self.alto / 2 - 50, window=boton_nivel_1)
+        imagen_nivel_1 = Image.open("./juego_ladrillosMEDIA/nivel1.png").resize((150, 150), Image.ANTIALIAS)
+        imagen_nivel_1 = ImageTk.PhotoImage(imagen_nivel_1)  # Asegúrate de tener la imagen en el directorio
+        
+        imagen_nivel_2 = Image.open("./juego_ladrillosMEDIA/nivel2.png").resize((150, 150), Image.ANTIALIAS)
+        imagen_nivel_2 = ImageTk.PhotoImage(imagen_nivel_2)
 
-        boton_nivel_2 = tk.Button(self.ventana, text="Nivel 2", command=lambda: (self.sonidoBoton(),self.empezar_juego(2)))
+        imagen_nivel_3 = Image.open("./juego_ladrillosMEDIA/nivel3.png").resize((150, 150), Image.ANTIALIAS)
+        imagen_nivel_3 = ImageTk.PhotoImage(imagen_nivel_3)
+        
+        
+        boton_nivel_1 = tk.Button(self.ventana, image=imagen_nivel_1, command=lambda: (self.sonidoBoton(), self.empezar_juego(1)))
+        boton_nivel_1.image = imagen_nivel_1  # Mantener referencia para evitar garbage collection
+        self.canvas.create_window(self.ancho / 2 - 200, self.alto / 2, window=boton_nivel_1)
+
+        boton_nivel_2 = tk.Button(self.ventana, image=imagen_nivel_2, command=lambda: (self.sonidoBoton(), self.empezar_juego(2)))
+        boton_nivel_2.image = imagen_nivel_2
         self.canvas.create_window(self.ancho / 2, self.alto / 2, window=boton_nivel_2)
 
-        boton_nivel_3 = tk.Button(self.ventana, text="Nivel 3", command=lambda: (self.sonidoBoton(),self.empezar_juego(3)))
-        self.canvas.create_window(self.ancho / 2, self.alto / 2 + 50, window=boton_nivel_3)
+        boton_nivel_3 = tk.Button(self.ventana, image=imagen_nivel_3, command=lambda: (self.sonidoBoton(), self.empezar_juego(3)))
+        boton_nivel_3.image = imagen_nivel_3
+        self.canvas.create_window(self.ancho / 2 + 200, self.alto / 2, window=boton_nivel_3)
 
     def empezar_juego(self, nivel):
         self.limpiar_ventana()
@@ -323,7 +336,6 @@ class Arkanoid:
         value1=inicialValue1
         for fila in range(2,13,2):
             for columna in range(0,fila):
-                print(value1)
                 arrayPosicionCuadrados.append(value1)
                 value1=value1+23
             inicialValue1=inicialValue1-22
@@ -332,7 +344,6 @@ class Arkanoid:
         #rectangulo interno
         for fila in range(123,193,23):
             for columna in range(0,9):
-                print(fila+columna)
                 arrayPosicionCuadrados.append(fila+columna)
         
         #costado derecho
@@ -340,7 +351,6 @@ class Arkanoid:
         value2=inicialValue2
         for fila in range(2,13,2):
             for columna in range(0,fila):
-                print(value2)
                 arrayPosicionCuadrados.append(value2)
                 value2=value2+23
             inicialValue2=inicialValue2-24
@@ -474,10 +484,17 @@ class Arkanoid:
     def fin_del_juego(self, mensaje,nivel):
         self.en_juego = False
         pygame.mixer.music.stop()
+        
+        
+
+        # Crear un rectángulo semitransparente para el fondo
+        self.canvas.create_rectangle(
+            0, 0,  # Coordenadas superiores izquierda
+            self.ancho, self.alto,  # Coordenadas inferiores derecha
+            fill="black", stipple="gray75", outline=""
+        )
         self.canvas.create_text(self.ancho / 2, self.alto / 2, text=mensaje, fill="white", font=("Arial", 24))
-        
-        
-        contenedor_botones = tk.Frame(self.ventana, bg="black")
+        contenedor_botones = tk.Frame(self.ventana)
         contenedor_botones.pack()
 
         # Crear botones
