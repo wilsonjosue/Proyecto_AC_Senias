@@ -2,6 +2,7 @@ import time
 from asistente import AsistenteVoz
 from juego_AH import Juego_senias
 from juego_LC import JuegoLetras
+from juego_LADRILLOS import Arkanoid
 import customtkinter as ctk
 from PIL import Image
 import queue
@@ -35,8 +36,10 @@ class VirtualAssistant:
 
     def do_learn(self):
         
-        self.imprimir_mensaje("Iniciando aprendizaje...")
+        self.imprimir_mensaje("Iniciando arkanoid...")
         self.win_choose.destroy()
+        juego = Arkanoid(callback=self.presentar_opciones)  # Pasar el callback
+        juego.iniciar_juego()
 
     def do_game2(self):
         mi_queue = queue.Queue()
@@ -55,7 +58,7 @@ class VirtualAssistant:
         """Lee las opciones después de que la interfaz esté lista."""
         self.imprimir_mensaje("Opciones disponibles:")
         self.imprimir_mensaje(
-            "1) Juego Reconoce Señas\n"
+            "1) Juego Arkanoid\n"
             "2) Juego Letras Caen\n"
             "3) Juego Del Ahorcado"
         )
@@ -91,7 +94,7 @@ class VirtualAssistant:
         # Cargar imágenes
         image_size = (200, 150)
         img_reconoce_señas = ctk.CTkImage(
-            light_image=Image.open("images/juego_reconoce_señas.png"), size=image_size
+            light_image=Image.open("juego_ladrillosMEDIA/nivel2.png"), size=image_size
         )
         img_letras_caen = ctk.CTkImage(
             light_image=Image.open("images/juego_letras_caen.png"), size=image_size
@@ -107,7 +110,7 @@ class VirtualAssistant:
         img_label1.pack(pady=5)
         learn_button = ctk.CTkButton(
             option1_frame,
-            text="Juego Reconoce Señas",
+            text="Juego Arkanoid",
             command=self.do_learn,
             width=200,
         )

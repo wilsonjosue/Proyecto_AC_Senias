@@ -12,9 +12,9 @@ from abecedario import ClasificadorSenia  # Importamos ClasificadorSenia
 
 
 class Arkanoid:
-    def __init__(self):
+    def __init__(self, callback):
         pygame.init()
-
+        self.callback = callback
         self.ventana = tk.Tk()
         self.ventana.title("Arkanoid")
         self.ancho = 800
@@ -112,6 +112,8 @@ class Arkanoid:
         self.ventana.destroy()
         if self.camara.isOpened():
             self.camara.release()
+        if self.callback:
+           self.callback()
     def reproducir_video(self):
         self.video_running = True
         video = imageio.get_reader('./juego_ladrillosMEDIA/stars.mp4', 'ffmpeg')
@@ -514,5 +516,5 @@ class Arkanoid:
         self.ventana.mainloop()
 
 if __name__ == "__main__":
-    juego = Arkanoid()
+    juego = Arkanoid(callback=None)
     juego.iniciar_juego()

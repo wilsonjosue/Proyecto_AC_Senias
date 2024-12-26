@@ -218,7 +218,8 @@ class JuegoLetras:
                     if self.boton_salir.collidepoint(evento.pos):
                         queue.put("EXIT")
                         pygame.quit()
-                        exit()
+                        if self.callback:
+                            self.callback()
 
             # Dibujar los botones (esto se dibuja continuamente)
             self.dibujar_botones()
@@ -278,7 +279,8 @@ class JuegoLetras:
                     if self.boton_salir.collidepoint(evento.pos):
                         queue.put("EXIT")
                         pygame.quit()
-                        exit()
+                        if self.callback:
+                            self.callback()
 
             # Dibujar los botones
             self.dibujar_botones()
